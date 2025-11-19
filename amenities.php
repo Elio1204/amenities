@@ -60,6 +60,9 @@ function amenity_icon_class($text) {
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 </head>
 <body class="bg-gradient-to-br from-[#FF0000] to-[#FFA200] min-h-screen font-sans text-gray-900">
 
@@ -101,7 +104,8 @@ function amenity_icon_class($text) {
             echo "    <h3 class=\"text-lg font-bold mb-1\">{$nombre}</h3>";
             echo "    <p class=\"text-sm text-gray-600 mb-3\"><i class=\"fa-solid fa-location-dot\"></i> {$ubicacion}</p>";
             echo '    <div class="flex gap-2 flex-wrap">';
-            echo '      <button class="px-3 py-1.5 rounded-full bg-gray-100 text-sm text-gray-800 hover:bg-gray-200 transition"><i class="fa-solid fa-calendar-days"></i> Calendario</button>';
+            // botón Calendario: pasar el id correctamente
+            echo '      <button class="px-3 py-1.5 rounded-full bg-gray-100 text-sm text-gray-800 hover:bg-gray-200 transition" onclick="abrirCalendario(' . intval($idameni) . ')"><i class="fa-solid fa-calendar-days"></i> Calendario</button>';
             echo '      <button class="px-3 py-1.5 rounded-full bg-[#FF0000] text-sm text-white hover:bg-[#cc0000] transition"><i class="fa-solid fa-check"></i> Reservar</button>';
             echo '      <button class="btn-terminos px-3 py-1.5 rounded-full bg-gray-100 text-sm text-gray-800 hover:bg-gray-200 transition" ';
             echo ' data-terminos="'.$terminos.'" onclick="openModal(this)">';
@@ -159,6 +163,47 @@ function closeModal() {
     modal.classList.add('hidden');
   }, 300);
 }
+
+
+
+function abrirCalendario(idameni) {
+
+    // Mostrar modal
+    var modal = new bootstrap.Modal(document.getElementById('modalCalendario'));
+    modal.show();
+
+    // Cargar contenido desde amenity_calendario.php
+    document.getElementById('modalCalendarioBody').innerHTML = "Cargando...";
+
+    fetch("amenity_calendario.php?idameni=" + idameni)
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById('modalCalendarioBody').innerHTML = html;
+        })
+        .catch(err => {
+            document.getElementById('modalCalendarioBody').innerHTML = 
+                "<div class='text-danger'>Error al cargar el calendario.</div>";
+        });
+}
 </script>
+
+<!-- Modal Calendario -->
+<div class="modal fade" id="modalCalendario" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">Calendario del Amenity</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body" id="modalCalendarioBody">
+        Cargando...
+      </div>
+
+    </div>
+  </div>
+</div>
+
 
 </body>
